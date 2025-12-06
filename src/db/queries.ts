@@ -4,7 +4,7 @@ import { desc, eq } from "drizzle-orm";
 import { todosTable } from "./schema";
 import { db } from "./db";
 
-type NewToDo = {
+export type NewToDo = {
   userId: UUID;
   title: string;
   description?: string;
