@@ -1,6 +1,6 @@
 import { describe, expect, it, beforeEach, afterEach, mock } from "bun:test";
 
-import { insertTodo, insertUser, NewToDo } from "./queries";
+import { getTodosByUserId, insertTodo, insertUser, NewToDo } from "./queries";
 import {
   createTestDb,
   destroyTestDb,
@@ -37,5 +37,31 @@ describe("insertTodo", () => {
 
     expect(todo.id).toBeDefined();
     expect(todo.userId).toBe(newTodo.userId);
+  });
+});
+
+describe("getToDoByUserId", () => {
+  it("should return todos for a given userId", async () => {
+    const userId = await insertUser({
+      email: "test@gmail.com",
+      password: "Hello@123",
+    });
+    const todo1: NewToDo = {
+      userId: userId,
+      title: "Test Todo 1",
+      description: "This is test",
+    };
+    const todo2: NewToDo = {
+      userId: userId,
+      title: "Test Todo 2",
+      description: "This is test",
+    };
+
+    await insertTodo(todo1);
+    await insertTodo(todo2);
+
+    const todos = await getTodosByUserId(userId);
+
+    expect(todos.length).toBe(2);
   });
 });
