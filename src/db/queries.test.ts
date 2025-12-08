@@ -1,10 +1,34 @@
-import { describe, expect, it } from "bun:test";
-import { insertTodo, NewToDo } from "./queries";
+import { describe, expect, it, beforeEach, afterEach, mock } from "bun:test";
+
+import { insertTodo, insertUser, NewToDo } from "./queries";
+import {
+  createTestDb,
+  destroyTestDb,
+  TestDbContext,
+} from "../test/setup-test-db";
+
+let ctx: TestDbContext;
+
+beforeEach(async () => {
+  ctx = await createTestDb();
+
+  await mock.module("../db/db.ts", () => ({
+    db: ctx.db,
+  }));
+});
+
+afterEach(async () => {
+  await destroyTestDb(ctx);
+});
 
 describe("insertTodo", () => {
   it("should insert a todo into database", async () => {
+    const userId = await insertUser({
+      email: "test@gmail.com",
+      password: "Hello@123",
+    });
     const newTodo: NewToDo = {
-      userId: "a97842d1-6f70-4e88-164c-f04a3e475fa7",
+      userId: userId,
       title: "Test Title",
       description: "This is test",
     };

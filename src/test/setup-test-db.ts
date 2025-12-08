@@ -47,6 +47,6 @@ export const destroyTestDb = async ({ pool, testDBName }: TestDbContext) => {
     `,
     [testDBName]
   );
-  await adminPool.query(`DROP DATABASE IF EXIST "${testDBName}`);
+  await adminPool.query(`DROP DATABASE IF EXISTS "${testDBName}"`);
   await adminPool.end();
 };
