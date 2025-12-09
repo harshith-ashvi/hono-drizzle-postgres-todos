@@ -1,9 +1,24 @@
-import { Hono } from 'hono'
+import { Hono } from "hono";
+import { UUID } from "crypto";
 
-const app = new Hono()
+import { getTodosByUserId } from "./db/queries";
 
-app.get('/', (c) => {
-  return c.text('Hello Hono!')
-})
+const app = new Hono();
 
-export default app
+app.get("/todos", async (c) => {
+  const userId = c.req.query("userId");
+
+  if (!userId) {
+    return c.json({ error: "No User ID provided" }, 400);
+  }
+
+  try {
+    const todos = getTodosByUserId(userId as UUID);
+    return c.json(todos, 200);
+  } catch (err) {
+    console.log("Error fetching todos", err);
+    return c.json({ error: "Internal server error" }, 500);
+  }
+});
+
+export default app;
